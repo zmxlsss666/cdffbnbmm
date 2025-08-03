@@ -1,76 +1,37 @@
 package com.spw.plugin;
 
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.*;
-import com.sun.jna.ptr.IntByReference;
-import java.util.UUID;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
 
+/**
+ * Windows媒体传输控件(SMTC)管理器
+ */
 public class SmtcManager {
-    private static final String APP_ID = "SPW.LyricPlugin";
-    private static final UUID MEDIA_SESSION_ID = UUID.randomUUID();
-    private boolean initialized = false;
-
-    public SmtcManager() {
-        initialize();
-    }
-
-    private void initialize() {
-        try {
-            // 初始化COM库
-            Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-            initialized = true;
-            System.out.println("SMTC initialized successfully");
-        } catch (Exception e) {
-            System.err.println("Failed to initialize SMTC: " + e.getMessage());
-            initialized = false;
-        }
-    }
-
-    /**
-     * 更新媒体元数据
-     */
+    
+    // 模拟SMTC更新的实现
     public void updateMetadata(String title, String artist) {
-        if (!initialized) {
+        if (title == null || artist == null) {
             return;
         }
         
-        try {
-            // 这里是简化实现，实际项目中需要调用完整的IMFMediaSession API
-            System.out.println("Updating SMTC metadata - Title: " + title + ", Artist: " + artist);
-            
-            // 实际实现需要使用Windows Media Foundation API
-            // 这里仅做示意
-        } catch (Exception e) {
-            System.err.println("Failed to update SMTC metadata: " + e.getMessage());
-        }
+        // 实际实现中应调用Windows API更新SMTC元数据
+        System.out.println("SMTC Metadata - Title: " + title + ", Artist: " + artist);
     }
-
-    /**
-     * 更新SMTC歌词
-     */
-    public void updateLyrics(String lyrics) {
-        if (!initialized) {
+    
+    // 更新SMTC歌词显示
+    public void updateLyrics(String lyric) {
+        if (lyric == null) {
             return;
         }
         
-        try {
-            // 发送歌词到SMTC
-            System.out.println("Updating SMTC lyrics: " + lyrics);
-            
-            // 实际实现需要调用Windows的媒体控制API
-            // 这里仅做示意
-        } catch (Exception e) {
-            System.err.println("Failed to update SMTC lyrics: " + e.getMessage());
-        }
+        // 实际实现中应调用Windows API更新SMTC歌词
+        System.out.println("SMTC Lyrics: " + lyric.substring(0, Math.min(30, lyric.length())) + "...");
     }
-
-    /**
-     * 释放资源
-     */
+    
+    // 关闭SMTC连接
     public void shutdown() {
-        if (initialized) {
-            Ole32.INSTANCE.CoUninitialize();
-            initialized = false;
-        }
+        System.out.println("SMTC connection closed");
     }
 }
+    

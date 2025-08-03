@@ -59,3 +59,4 @@ public class LyricPluginExtensionImpl implements LyricPluginExtension {
         }
     }
 }
+    

@@ -2,27 +2,28 @@ package com.spw.plugin;
 
 import org.pf4j.Plugin;
 import org.pf4j.PluginWrapper;
+import org.pf4j.Extension;
 
 public class LyricPlugin extends Plugin {
-    private LyricPluginExtensionImpl extension;
 
     public LyricPlugin(PluginWrapper wrapper) {
         super(wrapper);
     }
-
+    
     @Override
     public void start() {
         System.out.println("LyricPlugin started");
-        extension = new LyricPluginExtensionImpl();
-        extension.initialize();
     }
-
+    
     @Override
     public void stop() {
         System.out.println("LyricPlugin stopped");
-        if (extension != null) {
-            extension.destroy();
-            extension = null;
-        }
+        super.stop();
+    }
+    
+    @Extension
+    public static class LyricPluginExtensionProvider extends LyricPluginExtensionImpl {
+        // 由PF4J框架自动实例化
     }
 }
+    

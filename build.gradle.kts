@@ -33,9 +33,6 @@ dependencies {
     implementation("net.java.dev.jna:jna:5.13.0")
     implementation("net.java.dev.jna:jna-platform:5.13.0")
     
-    // 宿主应用 API
-    implementation(files("libs/spw-host-api.jar"))
-    
     // 测试依赖
     testImplementation("junit:junit:4.13.2")
 }
@@ -56,7 +53,7 @@ tasks.jar {
         )
     }
     
-    // 包含所有依赖（如果需要）
+    // 包含所有依赖
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
         // 排除签名文件，避免冲突
         exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
