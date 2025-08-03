@@ -53,10 +53,15 @@ tasks.jar {
         )
     }
     
+    // 处理重复文件策略：保留第一个出现的文件
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    
     // 包含所有依赖
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
         // 排除签名文件，避免冲突
         exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+        // 排除可能导致冲突的重复配置文件
+        exclude("META-INF/substrate/config/reflectionconfig.json")
     }
 }
 
