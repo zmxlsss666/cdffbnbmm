@@ -1,54 +1,80 @@
 plugins {
-    java
-    application
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    `java-library`
+    `maven-publish`
+    id("org.openjfx.javafxplugin") version "0.0.13"
+}
+
+group = "com.spw"
+version = "1.0.0"
+description = "SPW 桌面歌词插件"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+javafx {
+    version = "17.0.2"
+    modules = listOf("javafx.controls", "javafx.fxml", "javafx.swing")
 }
 
 repositories {
     mavenCentral()
-    mavenLocal()
+    flatDir {
+        dirs("libs")
+    }
 }
 
 dependencies {
-    // PF4J插件框架
-    implementation("org.pf4j:pf4j:${properties["pf4jVersion"]}")
+    // PF4J 插件框架
+    implementation("org.pf4j:pf4j:3.12.0")
     
-    // JNA - 用于调用Windows API
-    implementation("net.java.dev.jna:jna:${properties["jnaVersion"]}")
-    implementation("net.java.dev.jna:jna-platform:${properties["jnaVersion"]}")
+    // JNA 用于调用 Windows API
+    implementation("net.java.dev.jna:jna:5.13.0")
+    implementation("net.java.dev.jna:jna-platform:5.13.0")
     
-    // JavaFX - 用于UI界面
-    implementation("org.openjfx:javafx-base:${properties["javafxVersion"]}")
-    implementation("org.openjfx:javafx-controls:${properties["javafxVersion"]}")
-    implementation("org.openjfx:javafx-graphics:${properties["javafxVersion"]}")
-    implementation("org.openjfx:javafx-swing:${properties["javafxVersion"]}")
-    
-    // 宿主应用API
+    // 宿主应用 API
     implementation(files("libs/spw-host-api.jar"))
+    
+    // 测试依赖
+    testImplementation("junit:junit:4.13.2")
 }
 
-tasks {
-    // 插件打包任务
-    shadowJar {
-        archiveBaseName.set("spw-lyric-plugin")
-        archiveClassifier.set("")
-        manifest {
-            attributes(
-                "Plugin-Id": "spw-lyric-plugin",
-                "Plugin-Class": "com.spw.plugin.LyricPlugin",
-                "Plugin-Version": "${project.version}",
-                "Plugin-Provider": "SPW Studio",
-                "Plugin-Dependencies": ""
-            )
-        }
+tasks.jar {
+    // 插件 JAR 文件的名称
+    archiveFileName.set("${project.name}-${project.version}.jar")
+    
+    // 配置 MANIFEST.MF 文件
+    manifest {
+        attributes(
+            "Manifest-Version" to "1.0",
+            "Plugin-Id" to "spw-lyric-plugin",
+            "Plugin-Class" to "com.spw.plugin.LyricPlugin",
+            "Plugin-Version" to "${project.version}",
+            "Plugin-Provider" to "SPW Studio",
+            "Plugin-Dependencies" to ""
+        )
     }
     
-    // 构建时自动执行打包任务
-    build {
-        dependsOn(shadowJar)
-    }
-    
-    compileJava {
-        options.encoding = "UTF-8"
+    // 包含所有依赖（如果需要）
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) {
+        // 排除签名文件，避免冲突
+        exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
     }
 }
+
+tasks.test {
+    useJUnit()
+    testLogging {
+        events("PASSED", "SKIPPED", "FAILED")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+}
+    
