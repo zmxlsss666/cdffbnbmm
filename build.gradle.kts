@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     // PF4J 插件框架
-    implementation("org.pf4j:pf4j:3.12.0")
+    implementation("org.pf4j:pf4j:3.9.0")
     
     // JNA 用于调用 Windows API
     implementation("net.java.dev.jna:jna:5.13.0")
